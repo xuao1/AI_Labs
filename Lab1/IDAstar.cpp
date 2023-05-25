@@ -99,7 +99,7 @@ vector<Node*> get_neighbors(Node* node) {
                     }
                 }
             }
-            if (tmp.size() > 2) return tmp;
+            if (tmp.size() > 1) return tmp;
             // 第二种 L
             if (i <= N - 2 && j <= N - 2) {
                 for (int k = 0; k < N; k++)
@@ -117,7 +117,7 @@ vector<Node*> get_neighbors(Node* node) {
                     }
                 }
             }
-            if (tmp.size() > 2) return tmp;
+            if (tmp.size() > 1) return tmp;
             // 第三种 L
             if (i <= N - 2 && j >= 1) {
                 for (int k = 0; k < N; k++)
@@ -135,7 +135,7 @@ vector<Node*> get_neighbors(Node* node) {
                     }
                 }
             }
-            if (tmp.size() > 2) return tmp;
+            if (tmp.size() > 1) return tmp;
             // 第四种 L
             if (i >= 1 && j >= 1) {
                 for (int k = 0; k < N; k++)
@@ -153,7 +153,7 @@ vector<Node*> get_neighbors(Node* node) {
                     }
                 }
             }
-            if (tmp.size() > 2) return tmp;
+            if (tmp.size() > 1) return tmp;
         }
 
     for (int i = 0; i < N; i++)
@@ -176,7 +176,7 @@ vector<Node*> get_neighbors(Node* node) {
                     }
                 }
             }
-            if (tmp.size() > 5) return tmp;
+            if (tmp.size() > 4) return tmp;
             // 第二种 L
             if (i <= N - 2 && j <= N - 2) {
                 for (int k = 0; k < N; k++)
@@ -194,7 +194,7 @@ vector<Node*> get_neighbors(Node* node) {
                     }
                 }
             }
-            if (tmp.size() > 5) return tmp;
+            if (tmp.size() > 4) return tmp;
             // 第三种 L
             if (i <= N - 2 && j >= 1) {
                 for (int k = 0; k < N; k++)
@@ -212,7 +212,7 @@ vector<Node*> get_neighbors(Node* node) {
                     }
                 }
             }
-            if (tmp.size() > 5) return tmp;
+            if (tmp.size() > 4) return tmp;
             // 第四种 L
             if (i >= 1 && j >= 1) {
                 for (int k = 0; k < N; k++)
@@ -230,7 +230,7 @@ vector<Node*> get_neighbors(Node* node) {
                     }
                 }
             }
-            if (tmp.size() > 5) return tmp;
+            if (tmp.size() > 4) return tmp;
         }
 
     for (int i = 0; i < N; i++)
@@ -253,7 +253,7 @@ vector<Node*> get_neighbors(Node* node) {
                     }
                 }
             }
-            if (tmp.size() > 12) return tmp;
+            if (tmp.size() > 8) return tmp;
             // 第二种 L
             if (i <= N - 2 && j <= N - 2) {
                 for (int k = 0; k < N; k++)
@@ -271,7 +271,7 @@ vector<Node*> get_neighbors(Node* node) {
                     }
                 }
             }
-            if (tmp.size() > 12) return tmp;
+            if (tmp.size() > 8) return tmp;
             // 第三种 L
             if (i <= N - 2 && j >= 1) {
                 for (int k = 0; k < N; k++)
@@ -289,7 +289,7 @@ vector<Node*> get_neighbors(Node* node) {
                     }
                 }
             }
-            if (tmp.size() > 12) return tmp;
+            if (tmp.size() > 8) return tmp;
             // 第四种 L
             if (i >= 1 && j >= 1) {
                 for (int k = 0; k < N; k++)
@@ -307,7 +307,7 @@ vector<Node*> get_neighbors(Node* node) {
                     }
                 }
             }
-            if (tmp.size() > 12) return tmp;
+            if (tmp.size() > 8) return tmp;
         }
     return tmp;
 }
