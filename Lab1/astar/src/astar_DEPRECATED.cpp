@@ -1,4 +1,4 @@
-ï»¿#include <iostream>
+#include <iostream>
 #include <vector>
 #include <queue>
 #include <cmath>
@@ -62,6 +62,14 @@ uint64_t hash_board(const int board[MAXN][MAXN]) {
 
 unordered_set<uint64_t> visited;
 
+struct Compare {
+    bool operator()(const Node* a, const Node* b) {
+        return a->f > b->f; // ÓësortµÄcmpÂß¼­¸ÕºÃÊÇÏà·´µÄ
+    }
+};
+
+priority_queue<Node*, vector<Node*>, Compare> OpenList;
+
 bool Is_result(Node* node) {
     bool flag = 1;
     for (int i = 0; i < N; i++)
@@ -77,12 +85,11 @@ void Print_result() {
     cout << "yes" << endl;
 }
 
-vector<Node*> get_neighbors(Node* node) {
-    vector<Node*> tmp;
+int new_board[MAXN][MAXN];
+void add_neighbors(Node* node) {
     for (int i = 0; i < N; i++)
         for (int j = 0; j < N; j++) {
-            int new_board[MAXN][MAXN];
-            // ç¬¬ä¸€ç§ L
+            // µÚÒ»ÖÖ L
             if (i >= 1 && j <= N - 2) {
                 for (int k = 0; k < N; k++)
                     for (int l = 0; l < N; l++) {
@@ -94,13 +101,13 @@ vector<Node*> get_neighbors(Node* node) {
                     new_board[i][j + 1] = 1 - new_board[i][j + 1];
                     uint64_t neighbor_hash = hash_board(new_board);
                     if (visited.find(neighbor_hash) == visited.end()) {
-                        tmp.push_back(new Node(new_board, node, node->g + 1));
+                        OpenList.push(new Node(new_board, node, node->g + 1));
                         visited.insert(neighbor_hash);
+                        return;
                     }
                 }
             }
-            if (tmp.size() > 1) return tmp;
-            // ç¬¬äºŒç§ L
+            // µÚ¶şÖÖ L
             if (i <= N - 2 && j <= N - 2) {
                 for (int k = 0; k < N; k++)
                     for (int l = 0; l < N; l++) {
@@ -112,13 +119,13 @@ vector<Node*> get_neighbors(Node* node) {
                     new_board[i][j + 1] = 1 - new_board[i][j + 1];
                     uint64_t neighbor_hash = hash_board(new_board);
                     if (visited.find(neighbor_hash) == visited.end()) {
-                        tmp.push_back(new Node(new_board, node, node->g + 1));
+                        OpenList.push(new Node(new_board, node, node->g + 1));
                         visited.insert(neighbor_hash);
+                        return;
                     }
                 }
             }
-            if (tmp.size() > 1) return tmp;
-            // ç¬¬ä¸‰ç§ L
+            // µÚÈıÖÖ L
             if (i <= N - 2 && j >= 1) {
                 for (int k = 0; k < N; k++)
                     for (int l = 0; l < N; l++) {
@@ -130,13 +137,13 @@ vector<Node*> get_neighbors(Node* node) {
                     new_board[i][j - 1] = 1 - new_board[i][j - 1];
                     uint64_t neighbor_hash = hash_board(new_board);
                     if (visited.find(neighbor_hash) == visited.end()) {
-                        tmp.push_back(new Node(new_board, node, node->g + 1));
+                        OpenList.push(new Node(new_board, node, node->g + 1));
                         visited.insert(neighbor_hash);
+                        return;
                     }
                 }
             }
-            if (tmp.size() > 1) return tmp;
-            // ç¬¬å››ç§ L
+            // µÚËÄÖÖ L
             if (i >= 1 && j >= 1) {
                 for (int k = 0; k < N; k++)
                     for (int l = 0; l < N; l++) {
@@ -148,18 +155,18 @@ vector<Node*> get_neighbors(Node* node) {
                     new_board[i][j - 1] = 1 - new_board[i][j - 1];
                     uint64_t neighbor_hash = hash_board(new_board);
                     if (visited.find(neighbor_hash) == visited.end()) {
-                        tmp.push_back(new Node(new_board, node, node->g + 1));
+                        OpenList.push(new Node(new_board, node, node->g + 1));
                         visited.insert(neighbor_hash);
+                        return;
                     }
                 }
             }
-            if (tmp.size() > 1) return tmp;
+            if (OpenList.size() > 500) return;
         }
-
+    ////////////////////////////////////////////////////////////
     for (int i = 0; i < N; i++)
         for (int j = 0; j < N; j++) {
-            int new_board[MAXN][MAXN];
-            // ç¬¬ä¸€ç§ L
+            // µÚÒ»ÖÖ L
             if (i >= 1 && j <= N - 2) {
                 for (int k = 0; k < N; k++)
                     for (int l = 0; l < N; l++) {
@@ -171,13 +178,13 @@ vector<Node*> get_neighbors(Node* node) {
                     new_board[i][j + 1] = 1 - new_board[i][j + 1];
                     uint64_t neighbor_hash = hash_board(new_board);
                     if (visited.find(neighbor_hash) == visited.end()) {
-                        tmp.push_back(new Node(new_board, node, node->g + 1));
+                        OpenList.push(new Node(new_board, node, node->g + 1));
                         visited.insert(neighbor_hash);
+                        return;
                     }
                 }
             }
-            if (tmp.size() > 4) return tmp;
-            // ç¬¬äºŒç§ L
+            // µÚ¶şÖÖ L
             if (i <= N - 2 && j <= N - 2) {
                 for (int k = 0; k < N; k++)
                     for (int l = 0; l < N; l++) {
@@ -189,13 +196,13 @@ vector<Node*> get_neighbors(Node* node) {
                     new_board[i][j + 1] = 1 - new_board[i][j + 1];
                     uint64_t neighbor_hash = hash_board(new_board);
                     if (visited.find(neighbor_hash) == visited.end()) {
-                        tmp.push_back(new Node(new_board, node, node->g + 1));
+                        OpenList.push(new Node(new_board, node, node->g + 1));
                         visited.insert(neighbor_hash);
+                        return;
                     }
                 }
             }
-            if (tmp.size() > 4) return tmp;
-            // ç¬¬ä¸‰ç§ L
+            // µÚÈıÖÖ L
             if (i <= N - 2 && j >= 1) {
                 for (int k = 0; k < N; k++)
                     for (int l = 0; l < N; l++) {
@@ -207,13 +214,13 @@ vector<Node*> get_neighbors(Node* node) {
                     new_board[i][j - 1] = 1 - new_board[i][j - 1];
                     uint64_t neighbor_hash = hash_board(new_board);
                     if (visited.find(neighbor_hash) == visited.end()) {
-                        tmp.push_back(new Node(new_board, node, node->g + 1));
+                        OpenList.push(new Node(new_board, node, node->g + 1));
                         visited.insert(neighbor_hash);
+                        return;
                     }
                 }
             }
-            if (tmp.size() > 4) return tmp;
-            // ç¬¬å››ç§ L
+            // µÚËÄÖÖ L
             if (i >= 1 && j >= 1) {
                 for (int k = 0; k < N; k++)
                     for (int l = 0; l < N; l++) {
@@ -225,18 +232,18 @@ vector<Node*> get_neighbors(Node* node) {
                     new_board[i][j - 1] = 1 - new_board[i][j - 1];
                     uint64_t neighbor_hash = hash_board(new_board);
                     if (visited.find(neighbor_hash) == visited.end()) {
-                        tmp.push_back(new Node(new_board, node, node->g + 1));
+                        OpenList.push(new Node(new_board, node, node->g + 1));
                         visited.insert(neighbor_hash);
+                        return;
                     }
                 }
             }
-            if (tmp.size() > 4) return tmp;
+            if (OpenList.size() > 1000) return;
         }
-
+    ////////////////////////////////////////////////////////////
     for (int i = 0; i < N; i++)
         for (int j = 0; j < N; j++) {
-            int new_board[MAXN][MAXN];
-            // ç¬¬ä¸€ç§ L
+            // µÚÒ»ÖÖ L
             if (i >= 1 && j <= N - 2) {
                 for (int k = 0; k < N; k++)
                     for (int l = 0; l < N; l++) {
@@ -248,13 +255,13 @@ vector<Node*> get_neighbors(Node* node) {
                     new_board[i][j + 1] = 1 - new_board[i][j + 1];
                     uint64_t neighbor_hash = hash_board(new_board);
                     if (visited.find(neighbor_hash) == visited.end()) {
-                        tmp.push_back(new Node(new_board, node, node->g + 1));
+                        OpenList.push(new Node(new_board, node, node->g + 1));
                         visited.insert(neighbor_hash);
+                        return;
                     }
                 }
             }
-            if (tmp.size() > 8) return tmp;
-            // ç¬¬äºŒç§ L
+            // µÚ¶şÖÖ L
             if (i <= N - 2 && j <= N - 2) {
                 for (int k = 0; k < N; k++)
                     for (int l = 0; l < N; l++) {
@@ -266,13 +273,13 @@ vector<Node*> get_neighbors(Node* node) {
                     new_board[i][j + 1] = 1 - new_board[i][j + 1];
                     uint64_t neighbor_hash = hash_board(new_board);
                     if (visited.find(neighbor_hash) == visited.end()) {
-                        tmp.push_back(new Node(new_board, node, node->g + 1));
+                        OpenList.push(new Node(new_board, node, node->g + 1));
                         visited.insert(neighbor_hash);
+                        return;
                     }
                 }
             }
-            if (tmp.size() > 8) return tmp;
-            // ç¬¬ä¸‰ç§ L
+            // µÚÈıÖÖ L
             if (i <= N - 2 && j >= 1) {
                 for (int k = 0; k < N; k++)
                     for (int l = 0; l < N; l++) {
@@ -284,13 +291,13 @@ vector<Node*> get_neighbors(Node* node) {
                     new_board[i][j - 1] = 1 - new_board[i][j - 1];
                     uint64_t neighbor_hash = hash_board(new_board);
                     if (visited.find(neighbor_hash) == visited.end()) {
-                        tmp.push_back(new Node(new_board, node, node->g + 1));
+                        OpenList.push(new Node(new_board, node, node->g + 1));
                         visited.insert(neighbor_hash);
+                        return;
                     }
                 }
             }
-            if (tmp.size() > 8) return tmp;
-            // ç¬¬å››ç§ L
+            // µÚËÄÖÖ L
             if (i >= 1 && j >= 1) {
                 for (int k = 0; k < N; k++)
                     for (int l = 0; l < N; l++) {
@@ -302,14 +309,14 @@ vector<Node*> get_neighbors(Node* node) {
                     new_board[i][j - 1] = 1 - new_board[i][j - 1];
                     uint64_t neighbor_hash = hash_board(new_board);
                     if (visited.find(neighbor_hash) == visited.end()) {
-                        tmp.push_back(new Node(new_board, node, node->g + 1));
+                        OpenList.push(new Node(new_board, node, node->g + 1));
                         visited.insert(neighbor_hash);
+                        return;
                     }
                 }
             }
-            if (tmp.size() > 8) return tmp;
+            if (OpenList.size() > 100) return;
         }
-    return tmp;
 }
 
 bool equal(Node* a, Node* b) {
@@ -318,33 +325,6 @@ bool equal(Node* a, Node* b) {
             if (a->board[i][j] != b->board[i][j]) return false;
         }
     return true;
-}
-
-int IDA_star(Node* node, int threshold) {
-    if (Is_result(node)) {
-        Print_result();
-        return -1;
-    }
-    if (node->f > threshold) {
-        return node->f;
-    }
-    int Min = 0x3f3f3f3f;
-    vector<Node*> tmp = get_neighbors(node);
-    // cout << "******************" << endl;
-    for (auto neighbor : tmp) {
-        if (node->parent != nullptr && equal(neighbor, node->parent)) {
-            free(neighbor);
-            continue;
-        }
-        int flag = IDA_star(neighbor, threshold);
-        if (flag == -1) {
-            free(neighbor);
-            return -1;
-        }
-        if (flag < Min) Min = flag;
-        free(neighbor);
-    }
-    return Min;
 }
 
 
@@ -356,21 +336,23 @@ int main()
     for (int i = 0; i < N; i++)
         for (int j = 0; j < N; j++)
             cin >> start[i][j];
-    Node* now = new Node(start, nullptr, 0);
-    // cout << "****" << endl;
-    int threshold = now->f;
-    while (true) {
-        visited.clear();
-        int temp = IDA_star(now, threshold);
-        if (temp == -1) {
+    OpenList.push(new Node(start, nullptr, 0));
+    uint64_t neighbor_hash = hash_board(start);
+    visited.insert(neighbor_hash);
+
+    while (!OpenList.empty()) {
+        Node* now = OpenList.top();
+        OpenList.pop();
+        if (Is_result(now)) {
+            Print_result();
             break;
         }
-        if (temp == INFINITY) {
+        add_neighbors(now);
+        if (OpenList.empty()) {
             cout << "No valid solution" << endl;
             break;
         }
-        threshold = temp;
-        cout << threshold << endl;
+        free(now);
     }
     return 0;
 }
