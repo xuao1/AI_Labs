@@ -23,11 +23,12 @@ class char_tokenizer:
         # TODO: convert a string into a list of integers and return, using the dictionary you created above
         return [self.char_to_int[char] for char in string]
         # End of your code
- 
+
     def decode(self, codes: List[int]):
         # TODO: convert a list of integers into a string and return, using the dictionary you created above
         return "".join(self.int_to_char[code] for code in codes)
         # End of your code
+
 
 class Head(nn.Module):
     """single head of self-attention"""
@@ -51,7 +52,8 @@ class Head(nn.Module):
         query = self.Query(inputs)
         value = self.Value(inputs)
         attn_scores = torch.matmul(query, key.transpose(-2, -1)) / math.sqrt(key.size(-1))
-        attn_scores = attn_scores.masked_fill(~self.tril[:attn_scores.size(-2), :attn_scores.size(-1)].bool(), float('-inf'))
+        attn_scores = attn_scores.masked_fill(~self.tril[:attn_scores.size(-2), :attn_scores.size(-1)].bool(),
+                                              float('-inf'))
         attn_weights = F.softmax(attn_scores, dim=-1)
         out = torch.matmul(attn_weights, value)
         # End of your code
@@ -61,13 +63,14 @@ class Head(nn.Module):
 class MultiHeadAttention(nn.Module):
     def __init__(self, n_heads, head_size):
         super().__init__()
-        #TODO: implement heads and projection
+        # TODO: implement heads and projection
         self.heads = nn.ModuleList([Head(head_size) for _ in range(n_heads)])
         self.projection = nn.Linear(n_heads * head_size, n_embd)
+
     # End of your code
 
     def forward(self, inputs):
-        #TODO: implement the forward function of the multi-head attention
+        # TODO: implement the forward function of the multi-head attention
         out = torch.cat([head(inputs) for head in self.heads], dim=-1)
         return self.projection(out)
 
@@ -75,7 +78,7 @@ class MultiHeadAttention(nn.Module):
 class FeedForward(nn.Module):
     def __init__(self, n_embd):
         super().__init__()
-        #TODO: implement the feed-forward network
+        # TODO: implement the feed-forward network
         self.net = nn.Sequential(
             nn.Linear(n_embd, 4 * n_embd),
             nn.ReLU(),
@@ -90,7 +93,7 @@ class FeedForward(nn.Module):
 class Block(nn.Module):
     def __init__(self, n_embd, n_heads):
         super().__init__()
-        # TODO: implement the block of transformer using the MultiHeadAttention and 
+        # TODO: implement the block of transformer using the MultiHeadAttention and
         # FeedForward modules, along with the layer normalization layers
         self.ln1 = nn.LayerNorm(n_embd)
         self.attn = MultiHeadAttention(n_heads, n_embd // n_heads)
@@ -99,7 +102,7 @@ class Block(nn.Module):
         # End of your code
 
     def forward(self, inputs):
-        #TODO: implement the forward function of the block, you may refer to the docs of this experiment
+        # TODO: implement the forward function of the block, you may refer to the docs of this experiment
         x = self.attn(inputs)
         x = self.ln1(inputs + x)  # Add & Norm
         y = self.mlp(x)
@@ -111,7 +114,7 @@ class Block(nn.Module):
 class Transformer(nn.Module):
     def __init__(self):
         super().__init__()
-        # TODO: create the embedding table, the stack of blocks, the layer normalization layer, 
+        # TODO: create the embedding table, the stack of blocks, the layer normalization layer,
         # and the linear layers.
         self.embedding = nn.Embedding(n_vocab, n_embd)
         self.blocks = nn.ModuleList([Block(n_embd, n_heads) for _ in range(n_layers)])
@@ -140,13 +143,14 @@ class Transformer(nn.Module):
         #  and return the generated tokens with length of max_new_tokens
         inputs = inputs.clone()
         for _ in range(max_new_tokens):
-            # generates new tokens by iteratively sampling from the model's predicted probability distribution, 
+            # generates new tokens by iteratively sampling from the model's predicted probability distribution,
             # concatenating the sampled tokens to the input sequence, and returning the updated sequence.
             # logits, _ = self(inputs)
             # _, max_indices = torch.max(logits, dim=-1)
             # new_token = max_indices[:, -1:]
             # inputs = torch.cat([inputs, new_token], dim=1)
-            logits, _ = self(inputs)
+            inputs_within_block_size = inputs[:, -block_size:]
+            logits, _ = self(inputs_within_block_size)
             probs = F.softmax(logits[:, -1, :], dim=-1)
             new_token = torch.multinomial(probs, num_samples=1)
             inputs = torch.cat([inputs, new_token], dim=-1)
@@ -157,8 +161,8 @@ class Transformer(nn.Module):
 def get_batch(split):
     data = train_data if split == "train" else val_data
     ix = torch.randint(len(data) - block_size, (batch_size,))
-    x = torch.stack([data[i : i + block_size] for i in ix])
-    y = torch.stack([data[i + 1 : i + block_size + 1] for i in ix])
+    x = torch.stack([data[i: i + block_size] for i in ix])
+    y = torch.stack([data[i + 1: i + block_size + 1] for i in ix])
     x, y = x.to(device), y.to(device)
     return x, y
 
@@ -204,7 +208,7 @@ def train(model):
 # define the hyperparameters
 batch_size = 16
 block_size = 256
-max_iters = 5000 # set the number of training iterations as you like
+max_iters = 50  # set the number of training iterations as you like
 eval_interval = 50
 learning_rate = 1e-3
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -226,7 +230,7 @@ n_vocab = tokenizer.n_vocab
 
 # separate the dataset into train and validation
 train_data = torch.tensor(encode(text[: -len(text) // 10]), dtype=torch.long)
-val_data = torch.tensor(encode(text[-len(text) // 10 :]), dtype=torch.long)
+val_data = torch.tensor(encode(text[-len(text) // 10:]), dtype=torch.long)
 
 # define the model
 model = Transformer().to(device)
