@@ -67,7 +67,7 @@ struct Node {
 
 struct Compare {
     bool operator()(const Node* a, const Node* b) {
-        return a->f > b->f; // ÓësortµÄcmpÂß¼­¸ÕºÃÊÇÏà·´µÄ
+        return a->f > b->f; // ï¿½ï¿½sortï¿½ï¿½cmpï¿½ß¼ï¿½ï¿½Õºï¿½ï¿½ï¿½ï¿½à·´ï¿½ï¿½
     }
 };
 
